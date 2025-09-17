@@ -1,0 +1,74 @@
+﻿Restoring packages for D:\Proyectos\FunctionApp-oAuth-VF\FunctionApp1\FunctionApp1.csproj...
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker/index.json
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker/index.json 247ms
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker/2.0.0/microsoft.azure.functions.worker.2.0.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker/2.0.0/microsoft.azure.functions.worker.2.0.0.nupkg 367ms
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.core/index.json
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.grpc/index.json
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.core/index.json 117ms
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.core/2.0.0/microsoft.azure.functions.worker.core.2.0.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.grpc/index.json 377ms
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.grpc/2.0.0/microsoft.azure.functions.worker.grpc.2.0.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.core/2.0.0/microsoft.azure.functions.worker.core.2.0.0.nupkg 374ms
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.azure.functions.worker.grpc/2.0.0/microsoft.azure.functions.worker.grpc.2.0.0.nupkg 329ms
+  GET https://api.nuget.org/v3-flatcontainer/grpc.net.clientfactory/index.json
+  GET https://api.nuget.org/v3-flatcontainer/google.protobuf/index.json
+  OK https://api.nuget.org/v3-flatcontainer/google.protobuf/index.json 100ms
+  OK https://api.nuget.org/v3-flatcontainer/grpc.net.clientfactory/index.json 107ms
+  GET https://api.nuget.org/v3-flatcontainer/google.protobuf/3.28.0/google.protobuf.3.28.0.nupkg
+  GET https://api.nuget.org/v3-flatcontainer/grpc.net.clientfactory/2.65.0/grpc.net.clientfactory.2.65.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/grpc.net.clientfactory/2.65.0/grpc.net.clientfactory.2.65.0.nupkg 311ms
+  OK https://api.nuget.org/v3-flatcontainer/google.protobuf/3.28.0/google.protobuf.3.28.0.nupkg 336ms
+  GET https://api.nuget.org/v3-flatcontainer/grpc.net.client/index.json
+  OK https://api.nuget.org/v3-flatcontainer/grpc.net.client/index.json 106ms
+  GET https://api.nuget.org/v3-flatcontainer/grpc.net.client/2.65.0/grpc.net.client.2.65.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/grpc.net.client/2.65.0/grpc.net.client.2.65.0.nupkg 322ms
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/index.json
+  GET https://api.nuget.org/v3-flatcontainer/grpc.net.common/index.json
+  OK https://api.nuget.org/v3-flatcontainer/grpc.net.common/index.json 108ms
+  GET https://api.nuget.org/v3-flatcontainer/grpc.net.common/2.65.0/grpc.net.common.2.65.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/index.json 136ms
+  GET https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/6.0.0/microsoft.extensions.logging.abstractions.6.0.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/grpc.net.common/2.65.0/grpc.net.common.2.65.0.nupkg 321ms
+  OK https://api.nuget.org/v3-flatcontainer/microsoft.extensions.logging.abstractions/6.0.0/microsoft.extensions.logging.abstractions.6.0.0.nupkg 320ms
+  GET https://api.nuget.org/v3-flatcontainer/grpc.core.api/index.json
+  OK https://api.nuget.org/v3-flatcontainer/grpc.core.api/index.json 280ms
+  GET https://api.nuget.org/v3-flatcontainer/grpc.core.api/2.65.0/grpc.core.api.2.65.0.nupkg
+  OK https://api.nuget.org/v3-flatcontainer/grpc.core.api/2.65.0/grpc.core.api.2.65.0.nupkg 334ms
+Installed Microsoft.Azure.Functions.Worker 2.0.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\microsoft.azure.functions.worker\2.0.0 with content hash vK0+XApQq2vDSbJxqrflliGLVILRl66gMfZrlv8yemGKdoh2KI7l4zQPW8ibCThznC2PEMp60+a1D3wp09ZXEg==.
+Installed Microsoft.Azure.Functions.Worker.Core 2.0.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\microsoft.azure.functions.worker.core\2.0.0 with content hash nzat+mbFtsNQv2QtqzHpGTCmR6LarjyzreNH7+1JZHjSyqntGVDyjBM6xqyv13zOH0swn5I3vJMKgpPlasdqCA==.
+Installed Microsoft.Azure.Functions.Worker.Grpc 2.0.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\microsoft.azure.functions.worker.grpc\2.0.0 with content hash NiOm+1EWQy7fz1kl08hCmIym2L36jREXXvQPao75zh7Tx7UCpV2IoH/BxmssWaGJPpup9cyKg3NsXEVFhc7qkQ==.
+Installed Microsoft.Extensions.Logging.Abstractions 6.0.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\microsoft.extensions.logging.abstractions\6.0.0 with content hash /HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA==.
+Installed Grpc.Core.Api 2.65.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\grpc.core.api\2.65.0 with content hash VHElVX8XpJoaoddHkxhSHrXqn+7k3cZRmAxvZFh0NElkZK5oAT0/QOPM2FJtt5/xIxjQPumz3TOkzrUT6b8V6g==.
+Installed Grpc.Net.Common 2.65.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\grpc.net.common\2.65.0 with content hash XbRegnfDrWoXZJ4GGdJat+KXnmCCkR6XQmWnIZxxIjphyZkWZgI0FN1PtGXU4RZ5a5C85qg1cscz1ju2biVXGg==.
+Installed Grpc.Net.ClientFactory 2.65.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\grpc.net.clientfactory\2.65.0 with content hash iVJ8/uoaPccipMeyD0uwpbX6lRhFEo4aLJmGhLsdigQWi1tDdf/PHfRNZudX3lqZGuqyxl+wC2CfuApIIKPMhg==.
+Installed Grpc.Net.Client 2.65.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\grpc.net.client\2.65.0 with content hash ys1Rz7pxV0XR2pm4BVMkm/PrJ2BQu8OXFTvnXzzelTvQ+19OiHbUSb1kSZ2X4V7FziaxrtWY52ssXK3MFjQxbg==.
+Installed Google.Protobuf 3.28.0 from https://api.nuget.org/v3/index.json to C:\Users\Admin\.nuget\packages\google.protobuf\3.28.0 with content hash lVsLcLIHpkOABswgydr0sjkIhSN5XE9C6AgLXxvMsa6pSSJIpmAIPvK/NZpuF+HTB6xp1R8T5nhLausWVOrU/w==.
+  CACHE https://api.nuget.org/v3/vulnerabilities/index.json
+  CACHE https://api.nuget.org/v3-vulnerabilities/2025.09.16.05.23.22/vulnerability.base.json
+  CACHE https://api.nuget.org/v3-vulnerabilities/2025.09.16.05.23.22/2025.09.17.17.23.26/vulnerability.update.json
+Installing NuGet package Microsoft.Azure.Functions.Worker 2.0.0.
+Writing assets file to disk. Path: D:\Proyectos\FunctionApp-oAuth-VF\FunctionApp1\obj\project.assets.json
+Successfully uninstalled 'Google.Protobuf 3.24.3' from FunctionApp1
+Successfully uninstalled 'Grpc.Core.Api 2.49.0' from FunctionApp1
+Successfully uninstalled 'Grpc.Net.Client 2.49.0' from FunctionApp1
+Successfully uninstalled 'Grpc.Net.ClientFactory 2.49.0' from FunctionApp1
+Successfully uninstalled 'Grpc.Net.Common 2.49.0' from FunctionApp1
+Successfully uninstalled 'Microsoft.Azure.Functions.Worker.Core 1.19.0' from FunctionApp1
+Successfully uninstalled 'System.Collections.Immutable 5.0.0' from FunctionApp1
+Successfully installed 'Google.Protobuf 3.28.0' to FunctionApp1
+Successfully installed 'Grpc.Core.Api 2.65.0' to FunctionApp1
+Successfully installed 'Grpc.Net.Client 2.65.0' to FunctionApp1
+Successfully installed 'Grpc.Net.ClientFactory 2.65.0' to FunctionApp1
+Successfully installed 'Grpc.Net.Common 2.65.0' to FunctionApp1
+Successfully installed 'Microsoft.Azure.Functions.Worker 2.0.0' to FunctionApp1
+Successfully installed 'Microsoft.Azure.Functions.Worker.Core 2.0.0' to FunctionApp1
+Successfully installed 'Microsoft.Azure.Functions.Worker.Grpc 2.0.0' to FunctionApp1
+Executing nuget actions took 118 ms
+Time Elapsed: 00:00:05.9825988
+========== Finished ==========
+
+Time Elapsed: 00:00:00.0223032
+========== Finished ==========
+
+
