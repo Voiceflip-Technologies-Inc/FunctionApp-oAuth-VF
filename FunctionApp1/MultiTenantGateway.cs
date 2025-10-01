@@ -126,32 +126,32 @@ public sealed class MultiTenantGateway
         };
         if (!string.IsNullOrWhiteSpace(t.Scopes)) form["scope"] = t.Scopes!;
         // Solicitar token
-        var client = _http.CreateClient();
-        using var content = new FormUrlEncodedContent(form);
-        using var res = await client.PostAsync(tokenUrl, content, ct);
-        var body = await res.Content.ReadAsStringAsync(ct);
-        // Error
-        if (!res.IsSuccessStatusCode)
-        {
-            _log.LogWarning("Token error [{Status}] {Body}", res.StatusCode, body);
-            return null;
-        }
-
         try
         {
+            var client = _http.CreateClient();
+            using var content = new FormUrlEncodedContent(form);
+            using var res = await client.PostAsync(tokenUrl, content, ct);
+            var body = await res.Content.ReadAsStringAsync(ct);
+            if (!res.IsSuccessStatusCode)
+            {
+                _log.LogWarning("Token error [{Status}] {Body} (url: {Url})", res.StatusCode, body, tokenUrl);
+                return null;
+            }
             using var doc = JsonDocument.Parse(body);
             return doc.RootElement.TryGetProperty("access_token", out var at) ? at.GetString() : null;
         }
-        catch
+        catch (Exception ex)
         {
-            return null;
+            _log.LogError(ex, "Token request failed ({Url})", tokenUrl);
+            return null; // que el caller devuelva 400 con {"error":"token_error"}
         }
-    }/// Copia los headers de una respuesta HttpResponseMessage a HttpResponseData.
-     /// <summary>
-     /// Copia los headers de una respuesta HttpResponseMessage a HttpResponseData.
-     /// </summary>
-     /// <param name="from"></param>
-     /// <param name="to"></param>
+    } // GetAccessTokenAsync
+    /// Copia los headers de una respuesta HttpResponseMessage a HttpResponseData.
+    /// <summary>
+    /// Copia los headers de una respuesta HttpResponseMessage a HttpResponseData.
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
     private static void CopyResponseHeaders(HttpResponseMessage from, HttpResponseData to)
     {
         foreach (var h in from.Headers)
@@ -274,14 +274,24 @@ private async Task<HttpResponseData> ProxyInternal(HttpRequestData req, string t
         var token = await GetAccessTokenAsync(t, ct);
         if (!string.IsNullOrWhiteSpace(token))
             outbound.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-    }
-    // else: se respeta el Authorization que venga
-    var client = _http.CreateClient();
-    using var upstream = await client.SendAsync(outbound, HttpCompletionOption.ResponseHeadersRead, ct);
-    // Construir respuesta
-    var res = req.CreateResponse((HttpStatusCode)upstream.StatusCode);
-    CopyResponseHeaders(upstream, res);
-    await CopyContentAsync(upstream.Content, res.Body, ct);
-    return res;
-} // ProxyInternal
+    } // else: se respeta el Authorization que venga
+        try // enviar
+        {
+            var client = _http.CreateClient();
+            using var upstream = await client.SendAsync(outbound, HttpCompletionOption.ResponseHeadersRead, ct);
+
+            var res = req.CreateResponse((HttpStatusCode)upstream.StatusCode);
+            CopyResponseHeaders(upstream, res);
+            await CopyContentAsync(upstream.Content, res.Body, ct);
+            return res;
+        }
+        catch (HttpRequestException ex)
+        {
+            _log.LogError(ex, "Upstream request failed: {Method} {Uri}", outbound.Method, outbound.RequestUri);
+            var res = req.CreateResponse(HttpStatusCode.BadGateway);
+            res.Headers.Add("Content-Type", "application/json; charset=utf-8");
+            await res.WriteStringAsync("{\"error\":\"bad_gateway\",\"detail\":\"upstream unreachable\"}");
+            return res;
+        } // catch
+    } // ProxyInternal
 } // class

@@ -1,18 +1,20 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿// Usando .NET 7 y Azure Functions SDK
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-// using Microsoft.Azure.Functions.Worker.Configuration; // <- necesario para .NET 5/6
+// Usa el SDK de Azure Functions
 var host = new HostBuilder()
-    .ConfigureAppConfiguration((ctx, cfg) =>
-    {
-        cfg.AddEnvironmentVariables(); // para TENANTS, TENANT__* en App Settings
-    })
     .ConfigureFunctionsWorkerDefaults()
+    .ConfigureAppConfiguration(cfg =>
+    {
+        // Lee App Settings de Azure (Environment Variables)
+        cfg.AddEnvironmentVariables();
+    })
     .ConfigureServices(services =>
     {
         services.AddHttpClient();
-        services.AddSingleton<TenantRegistry>(); // <- aquí se registra
+        services.AddSingleton<TenantRegistry>(); // <- DI para multi-tenant
     })
     .Build();
-//  Inicia la aplicación
+// Inicia la aplicación
 await host.RunAsync();
