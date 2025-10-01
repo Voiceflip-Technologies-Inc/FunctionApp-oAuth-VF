@@ -194,7 +194,7 @@ public sealed class MultiTenantGateway
     /// Devuelve un access_token con client_credentials para el tenant indicado (o el primero si no se indica).
     /// GET/POST /api/ClientCredentialsToken/{tenant?}
     /// </summary>
-    [Function("ClientCredentialsToken")]
+    [Function("IssueTenantToken")] // nombre único
     public async Task<HttpResponseData> ClientCredentialsToken(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ClientCredentialsToken/{tenant?}")]
         HttpRequestData req,
@@ -313,16 +313,18 @@ private async Task<HttpResponseData> ProxyInternal(HttpRequestData req, string t
         // Recorremos los nombres registrados y pedimos cada config
         return _tenants.AllTenantNames().Select(name =>
         {
+            // Siempre existe si está en AllTenantNames
             _tenants.TryGet(name, out var t); // seguro porque viene de AllTenantNames()
             // construir tokenUrl
             var tokenPath = t.TokenEndpointRelative ?? "/oauth/tokens";
-            var tokenUrl = CombineUri(t.BaseUrl, tokenPath).ToString();
+            //var tokenUrl = CombineUri(t.BaseUrl, tokenPath).ToString();
+            var tokenUrl = CombineUri(t.BaseUrl, t.TokenEndpointRelative).ToString();
             // devolver info menos sensible
             return new
             {
                 name,
                 baseUrl = t.BaseUrl,
-                tokenPath,
+                tokenPath = t.TokenEndpointRelative,
                 tokenUrl,
                 clientId = t.ClientId,
                 hasClientSecret = !string.IsNullOrEmpty(t.ClientSecret),
