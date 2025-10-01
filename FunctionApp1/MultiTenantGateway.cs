@@ -117,34 +117,43 @@ public sealed class MultiTenantGateway
     {
         if (string.IsNullOrWhiteSpace(t.ClientId) || string.IsNullOrWhiteSpace(t.ClientSecret))
             return null; // no hay credenciales -> no se inyecta token
-        // Construir petición
+        // Construir URL token
         var tokenUrl = CombineUri(t.BaseUrl, t.TokenEndpointRelative);
+        // Form-URL-encoded body
         var form = new Dictionary<string, string>
         {
             ["grant_type"] = "client_credentials",
             ["client_id"] = t.ClientId!,
             ["client_secret"] = t.ClientSecret!
         };
-        if (!string.IsNullOrWhiteSpace(t.Scopes)) form["scope"] = t.Scopes!;
-        // Solicitar token
+        if (!string.IsNullOrWhiteSpace(t.Scopes))
+            form["scope"] = t.Scopes!;
+        // Enviar petición
         try
         {
             var client = _http.CreateClient();
+            // Aceptamos JSON en la respuesta
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            // Enviar
             using var content = new FormUrlEncodedContent(form);
             using var res = await client.PostAsync(tokenUrl, content, ct);
             var body = await res.Content.ReadAsStringAsync(ct);
+            // Analizar respuesta
             if (!res.IsSuccessStatusCode)
             {
                 _log.LogWarning("Token error [{Status}] {Body} (url: {Url})", res.StatusCode, body, tokenUrl);
                 return null;
             }
+            // Extraer access_token
             using var doc = JsonDocument.Parse(body);
             return doc.RootElement.TryGetProperty("access_token", out var at) ? at.GetString() : null;
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Token request failed ({Url})", tokenUrl);
-            return null; // que el caller devuelva 400 con {"error":"token_error"}
+            return null;
         }
     } // GetAccessTokenAsync
     /// Copia los headers de una respuesta HttpResponseMessage a HttpResponseData.
