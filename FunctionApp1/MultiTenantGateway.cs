@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Linq;
 using System.Text.Json;
 /// <summary>
 /// Tenancy configuration.
@@ -173,7 +174,7 @@ public sealed class MultiTenantGateway
     /// <param name="req"></param>
     /// <returns></returns>
     [Function("Ping2")]
-    public HttpResponseData Ping2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping")] HttpRequestData req)
+    public HttpResponseData Ping2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping2")] HttpRequestData req)
     {
         var res = req.CreateResponse(HttpStatusCode.OK);
         res.Headers.Add("Content-Type", "text/plain");
@@ -294,4 +295,30 @@ private async Task<HttpResponseData> ProxyInternal(HttpRequestData req, string t
             return res;
         } // catch
     } // ProxyInternal
+    /// <summary>
+    /// snapshot de la configuración de tenants (para diagnóstico)
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<object> Snapshot()
+    {
+        // Recorremos los nombres registrados y pedimos cada config
+        return _tenants.AllTenantNames().Select(name =>
+        {
+            _tenants.TryGet(name, out var t); // seguro porque viene de AllTenantNames()
+            // construir tokenUrl
+            var tokenPath = t.TokenEndpointRelative ?? "/oauth/tokens";
+            var tokenUrl = CombineUri(t.BaseUrl, tokenPath).ToString();
+            // devolver info menos sensible
+            return new
+            {
+                name,
+                baseUrl = t.BaseUrl,
+                tokenPath,
+                tokenUrl,
+                clientId = t.ClientId,
+                hasClientSecret = !string.IsNullOrEmpty(t.ClientSecret),
+                scopes = t.Scopes
+            }; // return new object
+        }); // select
+    } // Snapshot
 } // class
