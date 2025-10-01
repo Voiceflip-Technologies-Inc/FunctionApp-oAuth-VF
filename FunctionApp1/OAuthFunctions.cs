@@ -225,4 +225,86 @@ public class OAuthFunctions
         await outRes.WriteStringAsync(await resp.Content.ReadAsStringAsync());
         return outRes;
     }
-}
+    /// <summary>
+    /// Inicia el flujo de autorización redirigiendo a la URL de Google
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    [Function("StartGoogleAuth")]
+    public async Task<HttpResponseData> StartGoogleAuthAsync(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "oauth/gcloud/start")] HttpRequestData req)
+    {
+        var clientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+        var redirectUri = Environment.GetEnvironmentVariable("GOOGLE_REDIRECT_URI");
+        var scopes = Environment.GetEnvironmentVariable("GOOGLE_SCOPES") ?? "https://www.googleapis.com/auth/gmail.send";
+        // Validate
+        var authUrl = $"https://accounts.google.com/o/oauth2/v2/auth?" +
+                      $"client_id={Uri.EscapeDataString(clientId)}&" +
+                      $"redirect_uri={Uri.EscapeDataString(redirectUri)}&" +
+                      $"scope={Uri.EscapeDataString(scopes)}&" +
+                      $"response_type=code&" +
+                      $"access_type=offline&" + // para obtener refresh_token
+                      $"prompt=consent";        // asegura que devuelva refresh_token
+        // Redirect
+        var response = req.CreateResponse(HttpStatusCode.Redirect);
+        response.Headers.Add("Location", authUrl);
+        return response;
+    } // End StartGoogleAuthAsync
+    /// <summary>
+    /// Google callback que recibe el código de autorización y pide el token
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    [Function("GoogleCallback")]
+    public async Task<HttpResponseData> GoogleCallback(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "oauth/gcloud/callback")] HttpRequestData req)
+    {
+        var query = UriHelper.GetQueryComponents(req.Url);
+        if (!query.TryGetValue("code", out var code))
+        {
+            var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            await errorResponse.WriteStringAsync("Missing 'code' parameter");
+            return errorResponse;
+        }
+        // Read settings
+        var clientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+        var clientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+        var redirectUri = Environment.GetEnvironmentVariable("GOOGLE_REDIRECT_URI");
+        // Exchange code for tokens
+        using var client = new HttpClient();
+        var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["client_id"] = clientId,
+            ["client_secret"] = clientSecret,
+            ["code"] = code,
+            ["grant_type"] = "authorization_code",
+            ["redirect_uri"] = redirectUri
+        });
+        // Make the request
+        var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
+        var tokenResponse = await response.Content.ReadAsStringAsync();
+        // Aquí puedes:
+        // - Guardar el token en Azure Table Storage / Blob / Key Vault
+        // - Devolverlo directamente (solo para testing)
+        // - Devolver un ID temporal que otra app pueda usar
+        var result = req.CreateResponse(HttpStatusCode.OK);
+        result.Headers.Add("Content-Type", "application/json");
+        await result.WriteStringAsync(tokenResponse);
+        return result;
+    } // End GoogleCallback
+    /// <summary>
+    /// GetGmailToken - Ejemplo de función para devolver un token almacenado
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns></returns>
+    /*
+    [Function("GetGmailToken")]
+    public async Task<HttpResponseData> GetGmailToken(
+    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "gmail/token")] HttpRequestData req)
+    {
+        // Aquí recuperas el access_token (y refresh si está expirado)
+        // desde tu almacenamiento seguro
+        // y devuelves un JSON con { "access_token": "...", "expires_in": 3600 }
+    } / End GetGmailToken
+    */
+} // End class
