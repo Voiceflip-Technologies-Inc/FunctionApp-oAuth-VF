@@ -6,6 +6,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.WebUtilities;
 /// <summary>
 /// Funciones para manejar OAuth con Zendesk
 /// </summary>
@@ -257,54 +258,53 @@ public class OAuthFunctions
     /// <returns></returns>
     [Function("GoogleCallback")]
     public async Task<HttpResponseData> GoogleCallback(
-    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "oauth/gcloud/callback")] HttpRequestData req)
+     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "oauth/gcloud/callback")] HttpRequestData req)
     {
-        var query = UriHelper.GetQueryComponents(req.Url);
-        if (!query.TryGetValue("code", out var code))
-        {
-            var errorResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-            await errorResponse.WriteStringAsync("Missing 'code' parameter");
-            return errorResponse;
-        }
-        // Read settings
+        var query = QueryHelpers.ParseQuery(req.Url.Query); // ayuda a parsear querystring
+        if (!query.TryGetValue("code", out var codeValues) || codeValues.Count == 0)
+        { // Missing code
+            var badReq = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badReq.WriteStringAsync("Missing 'code' parameter.");
+            return badReq;
+        } // We have the code
+        // Exchange code for tokens
+        var code = codeValues[0];
         var clientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
         var clientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
-        var redirectUri = Environment.GetEnvironmentVariable("GOOGLE_REDIRECT_URI");
-        // Exchange code for tokens
-        using var client = new HttpClient();
-        var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        var redirectUri = Environment.GetEnvironmentVariable("GOOGLE_REDIRECT_URI")
+                           ?? "https://voiceflip-oauth-d3dgb2d4eqg6h8d3.eastus-01.azurewebsites.net/api/oauth/gcloud/callback";
+        // Prepare request
+        using var httpClient = new HttpClient();
+        var tokenRequest = new Dictionary<string, string>
         {
             ["client_id"] = clientId,
             ["client_secret"] = clientSecret,
             ["code"] = code,
             ["grant_type"] = "authorization_code",
             ["redirect_uri"] = redirectUri
-        });
-        // Make the request
-        var response = await client.PostAsync("https://oauth2.googleapis.com/token", content);
-        var tokenResponse = await response.Content.ReadAsStringAsync();
-        // Aquí puedes:
-        // - Guardar el token en Azure Table Storage / Blob / Key Vault
-        // - Devolverlo directamente (solo para testing)
-        // - Devolver un ID temporal que otra app pueda usar
+        };
+        // Send request
+        var content = new FormUrlEncodedContent(tokenRequest);
+        var tokenResponse = await httpClient.PostAsync("https://oauth2.googleapis.com/token", content);
+        var jsonResponse = await tokenResponse.Content.ReadAsStringAsync();
+        // Return the JSON response
         var result = req.CreateResponse(HttpStatusCode.OK);
         result.Headers.Add("Content-Type", "application/json");
-        await result.WriteStringAsync(tokenResponse);
+        await result.WriteStringAsync(jsonResponse);
         return result;
     } // End GoogleCallback
     /// <summary>
-    /// GetGmailToken - Ejemplo de función para devolver un token almacenado
+    /// Fake Gmail token endpoint for testing
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    /*
     [Function("GetGmailToken")]
     public async Task<HttpResponseData> GetGmailToken(
     [HttpTrigger(AuthorizationLevel.Function, "get", Route = "gmail/token")] HttpRequestData req)
     {
-        // Aquí recuperas el access_token (y refresh si está expirado)
-        // desde tu almacenamiento seguro
-        // y devuelves un JSON con { "access_token": "...", "expires_in": 3600 }
-    } / End GetGmailToken
-    */
+        // Always return a fake token
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteStringAsync("{ \"access_token\": \"fake_token_for_testing\", \"expires_in\": 3600 }");
+        return response;
+    } // End GetGmailToken
 } // End class
