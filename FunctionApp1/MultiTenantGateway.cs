@@ -172,8 +172,8 @@ public sealed class MultiTenantGateway
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    [Function("Ping")]
-    public HttpResponseData Ping([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping")] HttpRequestData req)
+    [Function("Ping2")]
+    public HttpResponseData Ping2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping")] HttpRequestData req)
     {
         var res = req.CreateResponse(HttpStatusCode.OK);
         res.Headers.Add("Content-Type", "text/plain");
