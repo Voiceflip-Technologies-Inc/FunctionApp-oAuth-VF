@@ -74,7 +74,7 @@ public class DiagFunctions
     [HttpTrigger(AuthorizationLevel.Function, "get", Route = "diag/tenants")] HttpRequestData req)
     {
         var snapshot = _mtg.Snapshot(); // devuelve un enumerable con los tenants cargados
-        var res = req.CreateResponse(HttpStatusCode.OK);
+        // var res = req.CreateResponse(HttpStatusCode.OK);
         // Return JSON response with environment variable TENANTS and parsed registry snapshot.
         var payload = new
         {
@@ -83,9 +83,11 @@ public class DiagFunctions
         };
         // Return JSON response with environment variable status.
         // await res.WriteAsJsonAsync(payload);
+        var res = req.CreateResponse(HttpStatusCode.OK);
         res.Headers.Add("Content-Type", "application/json; charset=utf-8");
-        var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true });
-        await res.WriteStringAsync(json);
+        //var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true });
+        //await res.WriteStringAsync(json);
+        await res.WriteStringAsync(JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true }));
         // Return response.
         return res;
     } // DiagTenants

@@ -30,6 +30,12 @@ public sealed class TenantRegistry
     /// </summary>
     private readonly Dictionary<string, TenantConfig> _tenants;
     /// <summary>
+    /// lista de tenants (nombre, config)
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<KeyValuePair<string, TenantConfig>> Items() => _tenants;
+
+    /// <summary>
     /// Registra los tenants leyendo la configuración.
     /// </summary>
     /// <param name="cfg"></param>
@@ -310,26 +316,20 @@ private async Task<HttpResponseData> ProxyInternal(HttpRequestData req, string t
     /// <returns></returns>
     public IEnumerable<object> Snapshot()
     {
-        // Recorremos los nombres registrados y pedimos cada config
-        return _tenants.AllTenantNames().Select(name =>
+        return _tenants.Items().Select(kvp =>
         {
-            // Siempre existe si está en AllTenantNames
-            _tenants.TryGet(name, out var t); // seguro porque viene de AllTenantNames()
-            // construir tokenUrl
-            var tokenPath = t.TokenEndpointRelative ?? "/oauth/tokens";
-            //var tokenUrl = CombineUri(t.BaseUrl, tokenPath).ToString();
-            var tokenUrl = CombineUri(t.BaseUrl, t.TokenEndpointRelative).ToString();
-            // devolver info menos sensible
+            var t = kvp.Value;
+            var tokenUrl = new Uri(new Uri(t.BaseUrl.TrimEnd('/') + "/"), (t.TokenEndpointRelative ?? "/oauth/tokens").TrimStart('/')).ToString();
             return new
             {
-                name,
+                name = kvp.Key,
                 baseUrl = t.BaseUrl,
                 tokenPath = t.TokenEndpointRelative,
                 tokenUrl,
                 clientId = t.ClientId,
                 hasClientSecret = !string.IsNullOrEmpty(t.ClientSecret),
                 scopes = t.Scopes
-            }; // return new object
+            }; // return
         }); // select
     } // Snapshot
 } // class
