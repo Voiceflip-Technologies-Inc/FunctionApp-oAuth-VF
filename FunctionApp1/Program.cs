@@ -11,7 +11,7 @@ var host = new HostBuilder()
         services.AddLogging();                 // recomendado
         services.AddHttpClient();
         services.AddSingleton<TenantRegistry>();
-        services.AddSingleton<MultiTenantGateway>();   // <-- faltaba
+        services.AddSingleton<MultiTenantGateway>(); 
     })
     .Build(); // Build the host
 // Run the host

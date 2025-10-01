@@ -73,22 +73,20 @@ public class DiagFunctions
     public async Task<HttpResponseData> DiagTenants(
     [HttpTrigger(AuthorizationLevel.Function, "get", Route = "diag/tenants")] HttpRequestData req)
     {
-        var snapshot = _mtg.Snapshot(); // devuelve un enumerable con los tenants cargados
-        // var res = req.CreateResponse(HttpStatusCode.OK);
-        // Return JSON response with environment variable TENANTS and parsed registry snapshot.
-        var payload = new
-        {
-            envTenants = _cfg["TENANTS"],     // cadena “doorify,triangle”, etc.
-            loaded = _mtg.Snapshot()          // snapshot del registry ya parseado
-        };
-        // Return JSON response with environment variable status.
-        // await res.WriteAsJsonAsync(payload);
         var res = req.CreateResponse(HttpStatusCode.OK);
         res.Headers.Add("Content-Type", "application/json; charset=utf-8");
-        //var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true });
-        //await res.WriteStringAsync(json);
-        await res.WriteStringAsync(JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true }));
-        // Return response.
+        // Payload new object with envTenants and loaded snapshot
+        var payload = new
+        {
+            envTenants = _cfg["TENANTS"],  // "doorify,triangle", etc.
+            loaded = _mtg.Snapshot()       // snapshot del registry ya parseado
+        };
+        // Serializa con indentación
+        var json = System.Text.Json.JsonSerializer.Serialize(payload, new System.Text.Json.JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+        await res.WriteStringAsync(json);
         return res;
     } // DiagTenants
 }

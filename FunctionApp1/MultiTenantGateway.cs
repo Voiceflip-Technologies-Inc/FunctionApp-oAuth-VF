@@ -316,15 +316,18 @@ private async Task<HttpResponseData> ProxyInternal(HttpRequestData req, string t
     /// <returns></returns>
     public IEnumerable<object> Snapshot()
     {
+        // recorrer tenants y devolver datos relevantes (sin secrets)
         return _tenants.Items().Select(kvp =>
         {
             var t = kvp.Value;
-            var tokenUrl = new Uri(new Uri(t.BaseUrl.TrimEnd('/') + "/"), (t.TokenEndpointRelative ?? "/oauth/tokens").TrimStart('/')).ToString();
+            var tokenPath = string.IsNullOrWhiteSpace(t.TokenEndpointRelative) ? "/oauth/tokens" : t.TokenEndpointRelative;
+            var tokenUrl = new Uri(new Uri(t.BaseUrl.TrimEnd('/') + "/"), tokenPath.TrimStart('/')).ToString();
+            // Devolver objeto anónimo con datos relevantes (sin secrets)
             return new
             {
                 name = kvp.Key,
                 baseUrl = t.BaseUrl,
-                tokenPath = t.TokenEndpointRelative,
+                tokenPath = tokenPath,
                 tokenUrl,
                 clientId = t.ClientId,
                 hasClientSecret = !string.IsNullOrEmpty(t.ClientSecret),

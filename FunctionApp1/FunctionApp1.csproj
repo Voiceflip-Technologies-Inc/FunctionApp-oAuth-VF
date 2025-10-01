@@ -9,6 +9,10 @@
     <UserSecretsId>51b78b2d-2264-4ece-a76c-c9776ccdbfa2</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Function.cs" />
+    <Compile Remove="Function1.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Azure.Data.Tables" Version="12.10.0" />
     <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
