@@ -5,16 +5,10 @@
       "type": "storage.azure",
       "connectionId": "AzureWebJobsStorage"
     },
-    "appInsights2": {
+    "appInsights1": {
       "secretStore": "AzureAppSettings",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/voiceflip-auth",
       "type": "appInsights.azure",
-      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING1",
-      "dynamicId": null
-    },
-    "appInsights1": {
-      "ignored": "true",
-      "type": "appInsights",
       "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
     }
   }
