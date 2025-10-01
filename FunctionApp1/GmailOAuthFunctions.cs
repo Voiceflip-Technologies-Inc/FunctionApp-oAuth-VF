@@ -177,7 +177,8 @@ public class GmailOAuthFunctions
         // Pedimos un access_token al propio endpoint interno (reutilizamos lógica)
         var key = req.Headers.TryGetValues("x-functions-key", out var vals) ? System.Linq.Enumerable.FirstOrDefault(vals) : null;
         var self = $"{req.Url.Scheme}://{req.Url.Host}{(req.Url.IsDefaultPort ? "" : ":" + req.Url.Port)}/api/gmail/access-token";
-        if (!string.IsNullOrEmpty(req.FunctionContext.Invocation.FunctionId)) { /* NOOP solo para content */ }
+        // if (!string.IsNullOrEmpty(req.FunctionContext.Invocation.FunctionId)) { /* NOOP solo para content */ }
+        _ = req.FunctionContext.FunctionDefinition?.Id;
         // Construimos la URL con la Function Key (si existe)
         var msg = new HttpRequestMessage(HttpMethod.Get, self + (string.IsNullOrEmpty(key) ? "" : $"?code={UrlEncode(key)}"));
         var tokenCall = await Http.SendAsync(msg);
