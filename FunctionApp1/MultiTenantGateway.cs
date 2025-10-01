@@ -198,11 +198,11 @@ public sealed class MultiTenantGateway
     }
     /// <summary>
     /// Devuelve un access_token con client_credentials para el tenant indicado (o el primero si no se indica).
-    /// GET/POST /api/ClientCredentialsToken/{tenant?}
+    /// GET/POST /api/IssueTenantToken/{tenant?}
     /// </summary>
     [Function("IssueTenantToken")] // nombre único
-    public async Task<HttpResponseData> ClientCredentialsToken(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ClientCredentialsToken/{tenant?}")]
+    public async Task<HttpResponseData> IssueTenantToken(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "IssueTenantToken/{tenant?}")]
         HttpRequestData req,
         string? tenant,
         CancellationToken ct)

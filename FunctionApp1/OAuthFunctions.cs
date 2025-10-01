@@ -166,8 +166,8 @@ public class OAuthFunctions
     /// </summary>
     /// <param name="req"></param>
     /// <returns></returns>
-    [Function("ClientCredentialsTokenLegacy")]
-    public async Task<HttpResponseData> ClientCredentialsTokenLegacy(
+    [Function("LegacyClientCredentialsToken")]
+    public async Task<HttpResponseData> LegacyClientCredentialsToken(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "oauth/token/client")] HttpRequestData req)
     {
         var (ok, msg, baseUrl, clientId, clientSecret, _, _) = Validate();
